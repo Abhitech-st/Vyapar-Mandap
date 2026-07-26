@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
-import { BarChart3, CheckCircle2, ShieldCheck, Download, Printer } from 'lucide-react';
+import { BarChart3, CheckCircle2, ShieldCheck, Download, Printer, Filter } from 'lucide-react';
 
 export const Reports: React.FC = () => {
   const [activeReport, setActiveReport] = useState<'pnl' | 'bs'>('pnl');
+  const [period, setPeriod] = useState<string>('ytd');
 
   const pnlData = {
-    revenue: 4520000.0,
-    cogs: 1820000.0,
-    grossProfit: 2700000.0,
-    operatingExpenses: 850000.0,
-    netProfit: 1850000.0,
-    tax: 333000.0,
-    netIncome: 1517000.0
+    revenue: period === 'q1' ? 2200000.0 : period === 'q2' ? 2320000.0 : 4520000.0,
+    cogs: period === 'q1' ? 900000.0 : period === 'q2' ? 920000.0 : 1820000.0,
+    grossProfit: period === 'q1' ? 1300000.0 : period === 'q2' ? 1400000.0 : 2700000.0,
+    operatingExpenses: period === 'q1' ? 400000.0 : period === 'q2' ? 450000.0 : 850000.0,
+    netProfit: period === 'q1' ? 900000.0 : period === 'q2' ? 950000.0 : 1850000.0,
+    tax: period === 'q1' ? 162000.0 : period === 'q2' ? 171000.0 : 333000.0,
+    netIncome: period === 'q1' ? 738000.0 : period === 'q2' ? 779000.0 : 1517000.0
   };
 
   const bsData = {
@@ -26,7 +27,9 @@ export const Reports: React.FC = () => {
     totalEquity: 4390000.0
   };
 
-  const isBsBalanced = Math.abs(bsData.totalAssets - (bsData.totalLiabilities + bsData.totalEquity)) < 0.01;
+  const handlePrint = () => {
+    window.print();
+  };
 
   return (
     <div className="p-6 space-y-6 bg-slate-50 min-h-screen">
@@ -38,8 +41,18 @@ export const Reports: React.FC = () => {
           <p className="text-xs text-slate-600 font-medium">Automated Financial Statements synthesized directly from immutable double-entry ledgers</p>
         </div>
 
-        {/* Report Selector & Export Buttons */}
+        {/* Report Selector, Period & Export Buttons */}
         <div className="flex items-center space-x-3">
+          <select 
+            value={period} 
+            onChange={(e) => setPeriod(e.target.value)}
+            className="bg-white border border-slate-300 rounded-lg text-xs font-bold px-3 py-1.5 text-slate-800 focus:outline-none"
+          >
+            <option value="ytd">Full FY 2026-27 YTD</option>
+            <option value="q1">Quarter 1 (Apr - Jun)</option>
+            <option value="q2">Quarter 2 (Jul - Sep)</option>
+          </select>
+
           <div className="flex items-center bg-slate-200/80 border border-slate-300 p-1 rounded-lg">
             <button
               onClick={() => setActiveReport('pnl')}
@@ -59,8 +72,12 @@ export const Reports: React.FC = () => {
             </button>
           </div>
 
-          <button className="p-2 rounded-lg bg-white border border-slate-300 text-slate-700 hover:text-blue-600 transition shadow-xs">
-            <Download className="w-4 h-4" />
+          <button 
+            onClick={handlePrint}
+            className="p-2 rounded-lg bg-white border border-slate-300 text-slate-700 hover:text-blue-600 transition shadow-xs cursor-pointer"
+            title="Print / Save PDF"
+          >
+            <Printer className="w-4 h-4" />
           </button>
         </div>
       </div>
@@ -71,7 +88,7 @@ export const Reports: React.FC = () => {
           <div className="text-center border-b border-slate-200 pb-4 space-y-1">
             <h2 className="text-lg font-bold text-slate-900 tracking-tight">M/S SHARMA TRADERS</h2>
             <p className="text-xs font-mono font-bold text-blue-700">STATEMENT OF PROFIT AND LOSS</p>
-            <p className="text-[11px] text-slate-500 font-mono font-medium">For the period ended 26-Jul-2026 (FY 2026-2027 YTD)</p>
+            <p className="text-[11px] text-slate-500 font-mono font-medium">For the period ended 26-Jul-2026 ({period.toUpperCase()})</p>
           </div>
 
           <div className="space-y-4 text-xs font-mono">

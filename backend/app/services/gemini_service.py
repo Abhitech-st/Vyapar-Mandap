@@ -11,7 +11,6 @@ load_dotenv()
 
 logger = logging.getLogger("gemini_service")
 
-# Try initializing google.genai Client
 try:
     from google import genai
     from google.genai import types
@@ -64,7 +63,6 @@ class GeminiCacheManager:
                 logger.info(f"⚡ [Gemini Cache Hit] Served '{key_type}' instantly (0 API tokens used).")
                 return entry.get("response")
             else:
-                # Expired
                 del self.memory_cache[key]
                 self._save_cache()
         return None
@@ -83,17 +81,27 @@ class GeminiService:
     """Specialized Google Gemini API service for Vyapar Mandap with Cache Skills."""
 
     def __init__(self):
-        self.api_key = os.getenv("GEMINI_API_KEY", "").strip()
-        self.client = None
         self.model_name = "gemini-2.5-flash"
         self.cache = GeminiCacheManager()
+        self._client = None
+        self._init_client()
 
-        if GENAI_AVAILABLE and self.api_key:
+    def _init_client(self):
+        load_dotenv()
+        api_key = os.getenv("GEMINI_API_KEY", "").strip()
+        if GENAI_AVAILABLE and api_key:
             try:
-                self.client = genai.Client(api_key=self.api_key)
-                logger.info("Initialized Google Gemini API client with gemini-2.5-flash + Cache Skills")
+                self._client = genai.Client(api_key=api_key)
+                logger.info(f"Initialized Google Gemini API client with {self.model_name}")
             except Exception as e:
                 logger.error(f"Failed to initialize Gemini Client: {e}")
+                self._client = None
+
+    @property
+    def client(self):
+        if self._client is None:
+            self._init_client()
+        return self._client
 
     @property
     def is_active(self) -> bool:
@@ -104,7 +112,6 @@ class GeminiService:
         if not raw_text:
             return None
 
-        # Check Cache Skill first!
         cached_result = self.cache.get("invoice_parse", raw_text)
         if cached_result:
             return cached_result
@@ -156,7 +163,6 @@ Invoice Raw Content:
                 )
             )
             data = json.loads(response.text.strip())
-            # Save to Cache Skill
             self.cache.set("invoice_parse", raw_text, data)
             return data
         except Exception as e:
@@ -167,7 +173,6 @@ Invoice Raw Content:
         """Audits GST tax rules with transaction hash caching."""
         cache_key_data = f"{org_gstin}:{invoice_data.get('vendor_gstin')}:{invoice_data.get('subtotal')}:{invoice_data.get('cgst')}:{invoice_data.get('sgst')}:{invoice_data.get('igst')}"
         
-        # Check Cache Skill first!
         cached_result = self.cache.get("gst_audit", cache_key_data)
         if cached_result:
             return cached_result
@@ -201,7 +206,6 @@ Return ONLY a strict JSON object with keys:
                 )
             )
             res_data = json.loads(response.text.strip())
-            # Save to Cache Skill
             self.cache.set("gst_audit", cache_key_data, res_data)
             return res_data
         except Exception as e:
@@ -212,7 +216,6 @@ Return ONLY a strict JSON object with keys:
         """Invokes Gemini Copilot with prompt and query caching skills."""
         cache_key_data = f"{user_query}:{json.dumps(financial_context, sort_keys=True)}"
         
-        # Check Cache Skill first!
         cached_result = self.cache.get("copilot_query", cache_key_data)
         if cached_result:
             return cached_result
@@ -228,7 +231,7 @@ Current Financial Context:
 
 User Question: "{user_query}"
 
-Provide a concise, highly professional, accurate response highlighting verified double-entry ledger balances and tax implications.
+Provide a concise, highly professional, accurate response highlighting verified double-entry ledger balances and tax implications. Format your output nicely using Markdown bullets and bold text.
 """
         try:
             response = self.client.models.generate_content(
@@ -239,7 +242,6 @@ Provide a concise, highly professional, accurate response highlighting verified 
                 )
             )
             res_text = response.text.strip()
-            # Save to Cache Skill
             self.cache.set("copilot_query", cache_key_data, res_text)
             return res_text
         except Exception as e:

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Landmark, RefreshCw, CheckCircle2, AlertTriangle, ArrowRight, Upload, Sparkles } from 'lucide-react';
+import { Landmark, RefreshCw, CheckCircle2, AlertTriangle, ArrowRight, Upload, Sparkles, X, Plus } from 'lucide-react';
 
 export const Banking: React.FC = () => {
   const [reconciled, setReconciled] = useState<string[]>([]);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
 
   const transactions = [
     {
@@ -41,6 +43,11 @@ export const Banking: React.FC = () => {
     setReconciled([...reconciled, id]);
   };
 
+  const handleSimulateUpload = () => {
+    setUploadSuccess("Bank Statement (HDFC_Jul2026.csv) parsed cleanly. 15 new transaction lines ingested.");
+    setIsUploadModalOpen(false);
+  };
+
   return (
     <div className="p-6 space-y-6 bg-slate-50 min-h-screen">
       
@@ -51,16 +58,29 @@ export const Banking: React.FC = () => {
           <p className="text-xs text-slate-600 font-medium">Automated Fuzzy String & Amount Matching Engine (HDFC Current A/c 4092)</p>
         </div>
         <div className="flex items-center space-x-3">
-          <button className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 text-xs font-semibold transition shadow-xs">
+          <button 
+            onClick={() => setIsUploadModalOpen(true)}
+            className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 text-xs font-semibold transition shadow-xs cursor-pointer"
+          >
             <Upload className="w-3.5 h-3.5 text-blue-600" />
             <span>Upload MT940 / CSV</span>
           </button>
-          <button className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition shadow-md shadow-blue-500/20">
+          <button 
+            onClick={() => setReconciled(transactions.map(t => t.id))}
+            className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition shadow-md shadow-blue-500/20 cursor-pointer"
+          >
             <RefreshCw className="w-3.5 h-3.5" />
             <span>Run AI Auto-Match</span>
           </button>
         </div>
       </div>
+
+      {uploadSuccess && (
+        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-300 text-xs text-emerald-900 font-semibold flex items-center space-x-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+          <span>{uploadSuccess}</span>
+        </div>
+      )}
 
       {/* Summary KPI Bar */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
@@ -74,7 +94,9 @@ export const Banking: React.FC = () => {
         </div>
         <div className="glass-card rounded-xl p-4 shadow-xs">
           <div className="text-xs text-slate-500 font-semibold">Human Review Queue</div>
-          <div className="text-xl font-bold font-mono text-amber-800 mt-1">2 Lines</div>
+          <div className="text-xl font-bold font-mono text-amber-800 mt-1">
+            {3 - reconciled.length} Lines
+          </div>
         </div>
         <div className="glass-card rounded-xl p-4 shadow-xs">
           <div className="text-xs text-slate-500 font-semibold">Fuzzy Match Accuracy</div>
@@ -148,6 +170,35 @@ export const Banking: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Upload Statement Modal */}
+      {isUploadModalOpen && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+              <h3 className="font-bold text-base text-slate-900">Upload Bank Statement</h3>
+              <button onClick={() => setIsUploadModalOpen(false)} className="text-slate-400 hover:text-slate-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center space-y-2 hover:border-blue-400 transition cursor-pointer">
+              <Upload className="w-8 h-8 text-blue-600 mx-auto" />
+              <p className="text-xs font-bold text-slate-800">Drop MT940, OFX, or CSV Bank Statement</p>
+              <p className="text-[11px] text-slate-500 font-medium">Supports HDFC, ICICI, SBI, and Axis Bank exports</p>
+            </div>
+
+            <div className="flex justify-end space-x-3 pt-2">
+              <button onClick={() => setIsUploadModalOpen(false)} className="px-4 py-2 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold">
+                Cancel
+              </button>
+              <button onClick={handleSimulateUpload} className="px-4 py-2 rounded-lg bg-blue-600 text-white text-xs font-bold shadow-md shadow-blue-500/20">
+                Parse Statement
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

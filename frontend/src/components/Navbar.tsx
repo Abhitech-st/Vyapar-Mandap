@@ -1,11 +1,37 @@
-import React from 'react';
-import { Search, Bell, Sparkles, Building, User, Command, AlertCircle, ShieldCheck } from 'lucide-react';
+import React, { useState } from 'react';
+import { Search, Bell, Sparkles, Building, User, Command, AlertCircle, ShieldCheck, X, CheckCircle2, FileText, Landmark } from 'lucide-react';
 
 interface NavbarProps {
   onOpenCommandPalette: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ onOpenCommandPalette }) => {
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+
+  const notifications = [
+    {
+      id: "n-1",
+      title: "GSTR-3B Filing Deadline Approaching",
+      desc: "July 2026 return due in 25 days. Estimated Net Payable: ₹2,45,000.",
+      time: "10 mins ago",
+      type: "warning"
+    },
+    {
+      id: "n-2",
+      title: "Invoice #INV-2026-089 Pending Signoff",
+      desc: "Apex Technologies bill (₹47,200)parsed with 98.5% OCR confidence.",
+      time: "25 mins ago",
+      type: "action"
+    },
+    {
+      id: "n-3",
+      title: "Bank Statement Auto-Match Complete",
+      desc: "12 of 15 HDFC bank transactions matched with payment vouchers.",
+      time: "1 hour ago",
+      type: "success"
+    }
+  ];
+
   return (
     <header className="h-16 border-b border-slate-200 bg-white/90 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-40 shadow-sm">
       {/* Organization Switcher & Search Bar */}
@@ -18,7 +44,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCommandPalette }) => {
 
         <button 
           onClick={onOpenCommandPalette}
-          className="flex items-center space-x-3 bg-slate-100 border border-slate-200 hover:border-blue-300 text-slate-600 px-4 py-1.5 rounded-lg text-sm transition w-80 justify-between group shadow-inner"
+          className="flex items-center space-x-3 bg-slate-100 border border-slate-200 hover:border-blue-300 text-slate-600 px-4 py-1.5 rounded-lg text-sm transition w-80 justify-between group shadow-inner cursor-pointer"
         >
           <div className="flex items-center space-x-2">
             <Search className="w-4 h-4 text-slate-400 group-hover:text-blue-600" />
@@ -39,11 +65,44 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCommandPalette }) => {
           <span>STATUS: 1 PENDING APPROVAL • 0 FAILURES</span>
         </div>
 
-        {/* Notifications */}
-        <button className="p-2 rounded-lg bg-slate-100 border border-slate-200 hover:border-slate-300 text-slate-700 relative transition shadow-xs">
-          <Bell className="w-4 h-4" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-amber-500 rounded-full"></span>
-        </button>
+        {/* Notifications Button */}
+        <div className="relative">
+          <button 
+            onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+            className="p-2 rounded-lg bg-slate-100 border border-slate-200 hover:border-slate-300 text-slate-700 relative transition shadow-xs cursor-pointer"
+          >
+            <Bell className="w-4 h-4" />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-amber-500 rounded-full"></span>
+          </button>
+
+          {/* Notifications Dropdown */}
+          {isNotificationsOpen && (
+            <div className="absolute right-0 mt-2 w-80 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden divide-y divide-slate-100 animate-in fade-in zoom-in-95 duration-150">
+              <div className="px-4 py-3 bg-slate-50 flex items-center justify-between">
+                <span className="font-bold text-xs text-slate-800">Compliance & Task Alerts</span>
+                <button onClick={() => setIsNotificationsOpen(false)} className="text-slate-400 hover:text-slate-600">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="divide-y divide-slate-100 max-h-72 overflow-y-auto">
+                {notifications.map((n) => (
+                  <div key={n.id} className="p-3.5 hover:bg-blue-50/50 transition space-y-1">
+                    <div className="flex items-start justify-between">
+                      <span className="font-bold text-xs text-slate-900 leading-tight">{n.title}</span>
+                      <span className="text-[10px] font-mono text-slate-400 shrink-0 ml-2">{n.time}</span>
+                    </div>
+                    <p className="text-[11px] text-slate-600 font-medium leading-relaxed">{n.desc}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="p-2.5 bg-slate-50 text-center text-[11px] text-blue-700 font-bold font-mono">
+                Audit Trail Active (All Events Recorded)
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* User Profile */}
         <div className="flex items-center space-x-3 pl-2 border-l border-slate-200">
