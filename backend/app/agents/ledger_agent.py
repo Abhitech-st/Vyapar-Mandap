@@ -30,9 +30,29 @@ class LedgerAgent:
             .filter(LedgerAccount.organization_id == self.organization_id, LedgerAccount.code.in_(account_codes))
             .all()
         }
+        default_accounts = {
+            "5100": ("Computer & Server Expenses", "Expense", "Indirect Expense"),
+            "2100": ("Accounts Payable (Vendors)", "Liability", "Current Liability"),
+            "1310": ("Input CGST Asset", "Asset", "Tax Credit"),
+            "1320": ("Input SGST Asset", "Asset", "Tax Credit"),
+            "1330": ("Input IGST Asset", "Asset", "Tax Credit"),
+        }
         missing = [code for code in account_codes if code not in accounts]
-        if missing:
-            raise ValueError(f"Required ledger accounts are missing: {', '.join(missing)}")
+        for code in missing:
+            name, acc_type, sub_type = default_accounts.get(code, (f"Account {code}", "Expense", "Indirect Expense"))
+            new_acc = LedgerAccount(
+                id=str(uuid.uuid4()),
+                organization_id=self.organization_id,
+                code=code,
+                name=name,
+                account_type=acc_type,
+                sub_type=sub_type,
+                balance=0.0
+            )
+            self.db.add(new_acc)
+            self.db.commit()
+            self.db.refresh(new_acc)
+            accounts[code] = new_acc
 
         vendor = self.db.query(Vendor).filter(Vendor.id == invoice.vendor_id).first()
         vendor_name = vendor.name if vendor else "Vendor Payable"
