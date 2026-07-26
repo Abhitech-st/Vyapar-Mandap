@@ -1,0 +1,24 @@
+# Python runtime artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Local configuration and seeded runtime data
+.env
+.env.*
+!*.example
+*.db
+*.sqlite
+*.sqlite3
+
+# Frontend dependencies and build output
+node_modules/
+dist/
+
+# Editor and operating-system files
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
