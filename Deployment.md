@@ -1,5 +1,12 @@
 # Deployment & Infrastructure Guide - Vyapar Mandap
 
+## 🔗 Related Knowledge Nodes
+- System Architecture: [[Tech Stack]], [[Folder Structure]]
+- Execution Goals: [[Roadmap]]
+- Database Persistence: [[Database Schema]]
+
+---
+
 ## 🏗️ Infrastructure Overview
 
 ```

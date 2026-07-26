@@ -5,10 +5,21 @@ Built with **OpenAI Codex** & advanced agentic workflows, **Vyapar Mandap** brid
 
 ---
 
+## 🕸️ Obsidian Knowledge Vault Interconnected Graph
+Explore the interactive Obsidian knowledge graph connecting all platform specifications:
+
+- 🎯 **Vision & Requirements**: [[Product Vision]] | [[Requirements]] | [[Roadmap]] | [[Meeting Notes]]
+- ⚙️ **Architecture & Data**: [[Database Schema]] | [[API Contracts]] | [[CODEX_ARCHITECTURE]]
+- 🤖 **AI Multi-Agent Engine**: [[AI Agents]] | [[Prompts]] | [[User Flows]]
+- 💻 **User Interface & UX**: [[UI Components]] | [[Pages]]
+- 🛠️ **Infrastructure & Code**: [[Tech Stack]] | [[Folder Structure]] | [[Deployment]]
+
+---
+
 ## 🌟 System Architecture Highlights
 
-- **Decoupled Architecture**: FastAPI async Python backend paired with a modern React + Vite + Tailwind CSS (Slate dark mode) SPA frontend.
-- **10 Specialized AI Agents**:
+- **Decoupled Architecture**: FastAPI async Python backend paired with a modern React + Vite + Tailwind CSS (Slate dark mode) SPA frontend ([[Tech Stack]]).
+- **10 Specialized AI Agents** ([[AI Agents]]):
   1. **Supervisor Agent**: Orchestrates task graph pipelines and manages circular fallbacks.
   2. **Invoice Agent**: Vision OCR field extraction (GSTIN, HSN codes, line items) with duplicate hash detection and confidence scoring.
   3. **Ledger Agent**: Enforces double-entry balancing ($Total Debits = Total Credits$) before committing entries to immutable tables.
@@ -54,8 +65,8 @@ npm run dev
 
 ## 🎨 UI & UX Features
 
-- **Linear-Style Dark Mode Aesthetic**: Slate dark palette (`slate-950`), vibrant emerald accents for credits/success, rose for debits/liabilities, amber for review alerts, and JetBrains Mono font for monetary values.
+- **Linear-Style Dark Mode Aesthetic**: Slate dark palette (`slate-950`), vibrant emerald accents for credits/success, rose for debits/liabilities, amber for review alerts, and JetBrains Mono font for monetary values ([[UI Components]]).
 - **Global Command Palette (`Cmd+K`)**: Rapid navigation, OCR upload trigger, and instant AI Copilot queries.
-- **Split-Screen Invoice Reviewer**: PDF Canvas document preview on left, parsed fields + AI confidence + proposed double-entry journal entry on right with 1-click **Approve & Post**.
+- **Split-Screen Invoice Reviewer**: PDF Canvas document preview on left, parsed fields + AI confidence + proposed double-entry journal entry on right with 1-click **Approve & Post** ([[User Flows]]).
 - **Real-Time Agent Activity Ticker**: Live event stream showing step-by-step agent traces and confidence metrics.
-- **Financial Balance Verification**: Balance Sheet dynamically verifies $Assets = Liabilities + Equity$ with a green audit badge.
+- **Financial Balance Verification**: Balance Sheet dynamically verifies $Assets = Liabilities + Equity$ with a green audit badge ([[Pages]]).

@@ -5,16 +5,23 @@
 
 ---
 
+## 🔗 Related Vault Knowledge Nodes
+- Strategy & Goals: [[Requirements]], [[Roadmap]], [[Meeting Notes]]
+- Engineering Core: [[AI Agents]], [[Database Schema]], [[CODEX_ARCHITECTURE]]
+- Full Index: [[README]]
+
+---
+
 ## 🎯 The Core Problem
 Indian businesses and Chartered Accountants (CAs) spend hundreds of hours manually parsing vendor bills, verifying GSTIN statuses on the GST portal, matching Input Tax Credit (ITC) against GSTR-2B, calculating TDS under sections 194C/194J, and reconciling bank statement dumps line-by-line. Standard accounting software requires manual entry, while naive LLM tools hallucinate financial numbers.
 
 ## 💡 The Solution
-Vyapar Mandap combines **Vision OCR + 10 Specialized AI Agents** with a **Deterministic Double-Entry Ledger Engine**. 
+Vyapar Mandap combines **Vision OCR + 10 Specialized AI Agents** ([[AI Agents]]) with a **Deterministic Double-Entry Ledger Engine** ([[Database Schema]]). 
 
 1. **Unstructured to Structured**: PDF invoices are extracted with high precision.
-2. **Deterministic Compliance**: Tax splits (CGST/SGST/IGST), HSN codes, and TDS rates are calculated mathematically, not guessed by AI.
-3. **Human-in-the-Loop Safeguard**: No AI action posts directly to the immutable ledger without a 1-click human sign-off.
-4. **Modern Linear-Style UX**: Sleek Slate dark mode interface with real-time agent activity tickers and global `Cmd+K` command palette.
+2. **Deterministic Compliance**: Tax splits (CGST/SGST/IGST), HSN codes, and TDS rates are calculated mathematically.
+3. **Human-in-the-Loop Safeguard**: No AI action posts directly to the immutable ledger without a 1-click human sign-off ([[User Flows]]).
+4. **Modern Linear-Style UX**: Sleek Slate dark mode interface with real-time agent activity tickers and global `Cmd+K` command palette ([[UI Components]], [[Pages]]).
 
 ---
 

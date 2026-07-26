@@ -1,15 +1,23 @@
 # Folder Structure - Vyapar Mandap
 
+## 🔗 Related Knowledge Nodes
+- System Technologies: [[Tech Stack]]
+- Deployment Targets: [[Deployment]]
+- Codex Architecture: [[CODEX_ARCHITECTURE]]
+- Root Navigation: [[README]]
+
+---
+
 ```
 vyapar-mandap/
 ├── backend/
 │   ├── app/
-│   │   ├── agents/                 # Multi-agent orchestrator & specialized sub-agents
+│   │   ├── agents/                 # Multi-agent orchestrator & specialized sub-agents ([[AI Agents]])
 │   │   │   ├── supervisor.py
 │   │   │   ├── invoice_agent.py
 │   │   │   ├── ledger_agent.py
 │   │   │   └── specialized_agents.py (GST, TDS, BankRec, Reporting, Analytics)
-│   │   ├── api/                    # FastAPI routers (v1)
+│   │   ├── api/                    # FastAPI routers ([[API Contracts]])
 │   │   │   ├── auth.py
 │   │   │   ├── invoices.py
 │   │   │   ├── journals.py
@@ -17,7 +25,7 @@ vyapar-mandap/
 │   │   ├── core/                   # App config, database session setup
 │   │   │   ├── config.py
 │   │   │   └── database.py
-│   │   ├── models/                 # SQLAlchemy 22-table ORM models
+│   │   ├── models/                 # SQLAlchemy 22-table ORM models ([[Database Schema]])
 │   │   │   └── models.py
 │   │   └── main.py                 # FastAPI application entrypoint & WebSockets
 │   ├── seed_data.py                # Database seeder script
@@ -26,14 +34,14 @@ vyapar-mandap/
 ├── frontend/
 │   ├── public/
 │   ├── src/
-│   │   ├── components/             # UI primitives & layouts
+│   │   ├── components/             # UI primitives & layouts ([[UI Components]])
 │   │   │   ├── Navbar.tsx
 │   │   │   ├── Sidebar.tsx
 │   │   │   ├── CommandPalette.tsx
 │   │   │   ├── ActivityTimeline.tsx
 │   │   │   ├── AgentMonitor.tsx
 │   │   │   └── DocumentViewer.tsx
-│   │   ├── pages/                  # Workspace screens
+│   │   ├── pages/                  # Workspace screens ([[Pages]])
 │   │   │   ├── Dashboard.tsx
 │   │   │   ├── Invoices.tsx
 │   │   │   ├── Banking.tsx
@@ -50,7 +58,7 @@ vyapar-mandap/
 │   ├── package.json
 │   ├── tailwind.config.js
 │   └── vite.config.ts
-├── tools/                          # Codex Search & Code Editing Utilities
+├── tools/                          # Codex Search & Code Editing Utilities ([[CODEX_ARCHITECTURE]])
 │   ├── codex_tools.py
 │   ├── cli.py
 │   ├── test_codex_tools.py

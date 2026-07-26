@@ -18,6 +18,7 @@ node_modules/
 dist/
 
 # Editor and operating-system files
+.obsidian/
 .DS_Store
 Thumbs.db
 .idea/

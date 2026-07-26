@@ -4,6 +4,14 @@ Built with FastAPI (Python 3.11+). All endpoints return JSON and use standard HT
 
 ---
 
+## 🔗 Related Knowledge Nodes
+- Schema Core: [[Database Schema]]
+- Agent Pipeline: [[AI Agents]]
+- User Interface: [[Pages]], [[UI Components]]
+- Technology Stack: [[Tech Stack]]
+
+---
+
 ## 🔐 Authentication Router (`/api/v1/auth`)
 
 ### `POST /api/v1/auth/login`
@@ -30,14 +38,14 @@ Built with FastAPI (Python 3.11+). All endpoints return JSON and use standard HT
 ## 📄 Invoices Router (`/api/v1/invoices`)
 
 ### `GET /api/v1/invoices`
-- **Response (200 OK)**: List of invoice summary objects.
+- **Response (200 OK)**: List of invoice summary objects for [[Pages]].
 
 ### `POST /api/v1/invoices/upload`
 - **Request**: `multipart/form-data` with `file: UploadFile`.
-- **Response**: Extracted invoice fields + AI confidence score.
+- **Response**: Extracted invoice fields + AI confidence score from [[AI Agents]].
 
 ### `POST /api/v1/invoices/{id}/approve`
-- **Response**: Commits double-entry journal entry immutably.
+- **Response**: Commits double-entry journal entry immutably as described in [[User Flows]].
 
 ---
 
@@ -70,7 +78,7 @@ Built with FastAPI (Python 3.11+). All endpoints return JSON and use standard HT
 
 ### `POST /api/v1/ai/chat`
 - **Request**: `{ "query": "What is my GST liability for July?" }`
-- **Response**: Natural language response synthesized from DB state.
+- **Response**: Natural language response synthesized from DB state ([[Prompts]]).
 
 ### `WS /ws/ai/stream`
-- Streaming WebSocket endpoint emitting live JSON agent step events.
+- Streaming WebSocket endpoint emitting live JSON agent step events for [[UI Components]].
