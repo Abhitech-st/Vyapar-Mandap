@@ -36,21 +36,21 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose,
   const filtered = commands.filter(c => c.title.toLowerCase().includes(query.toLowerCase()));
 
   return (
-    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-start justify-center pt-24 px-4">
-      <div className="bg-slate-900 border border-slate-700 rounded-xl shadow-2xl w-full max-w-xl overflow-hidden divide-y divide-slate-800 animate-in fade-in zoom-in duration-150">
+    <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-start justify-center pt-24 px-4">
+      <div className="bg-white border border-slate-200 rounded-xl shadow-2xl w-full max-w-xl overflow-hidden divide-y divide-slate-100 animate-in fade-in zoom-in duration-150">
         
         {/* Input Bar */}
         <div className="flex items-center px-4 py-3 space-x-3">
-          <Search className="w-5 h-5 text-slate-400" />
+          <Search className="w-5 h-5 text-blue-600" />
           <input
             type="text"
             placeholder="Type a command or query..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             autoFocus
-            className="w-full bg-transparent text-slate-100 placeholder-slate-500 focus:outline-none text-base font-sans"
+            className="w-full bg-transparent text-slate-900 placeholder-slate-400 focus:outline-none text-base font-sans font-medium"
           />
-          <button onClick={onClose} className="p-1 rounded text-slate-400 hover:text-slate-200">
+          <button onClick={onClose} className="p-1 rounded text-slate-400 hover:text-slate-600">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -67,18 +67,18 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose,
                     onSelectAction(cmd.id);
                     onClose();
                   }}
-                  className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-slate-800/80 text-left transition group"
+                  className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-blue-50 text-left transition group"
                 >
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 rounded-md bg-slate-800 group-hover:bg-emerald-500/20 text-slate-300 group-hover:text-emerald-400 transition">
+                    <div className="p-2 rounded-md bg-slate-100 group-hover:bg-blue-600 text-slate-700 group-hover:text-white transition">
                       <Icon className="w-4 h-4" />
                     </div>
                     <div>
-                      <div className="text-sm font-medium text-slate-200 group-hover:text-emerald-300">{cmd.title}</div>
-                      <div className="text-[11px] text-slate-500">{cmd.category}</div>
+                      <div className="text-sm font-semibold text-slate-800 group-hover:text-blue-700">{cmd.title}</div>
+                      <div className="text-[11px] text-slate-500 font-medium">{cmd.category}</div>
                     </div>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-slate-600 group-hover:text-emerald-400 transition transform group-hover:translate-x-1" />
+                  <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-blue-600 transition transform group-hover:translate-x-1" />
                 </button>
               );
             })
@@ -88,9 +88,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose,
         </div>
 
         {/* Footer */}
-        <div className="px-4 py-2 bg-slate-950 text-[11px] text-slate-500 flex justify-between items-center font-mono">
+        <div className="px-4 py-2 bg-slate-50 text-[11px] text-slate-500 flex justify-between items-center font-mono border-t border-slate-100">
           <span>Press ESC to close</span>
-          <span>Vyapar Mandap Command Engine</span>
+          <span className="font-semibold text-blue-700">Vyapar Mandap Command Engine</span>
         </div>
 
       </div>
