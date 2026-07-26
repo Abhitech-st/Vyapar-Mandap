@@ -2,6 +2,10 @@ import os
 import json
 import logging
 from typing import Optional, Dict, Any
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 logger = logging.getLogger("gemini_service")
 
