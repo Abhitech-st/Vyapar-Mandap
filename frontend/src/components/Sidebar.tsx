@@ -3,6 +3,7 @@ import {
   LayoutDashboard, FileText, Landmark, BookOpen, Receipt, 
   Percent, BarChart3, Bot, Settings, Sparkles, ShieldCheck
 } from 'lucide-react';
+import { useApp } from '../context/AppContext';
 
 interface SidebarProps {
   currentTab: string;
@@ -10,6 +11,8 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab }) => {
+  const { organization } = useApp();
+
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'invoices', label: 'Invoices & Bills', icon: FileText, badge: '1 Approval' },
@@ -75,7 +78,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab }) =
             <ShieldCheck className="w-4 h-4 text-blue-600" />
             <span>Immutable Ledger Core</span>
           </div>
-          <p className="text-[11px] text-slate-500 font-medium">Every journal entry is cryptographically validated before posting.</p>
+          <p className="text-[11px] text-slate-500 font-medium font-mono">
+            {organization.gstin}
+          </p>
         </div>
       </div>
     </aside>

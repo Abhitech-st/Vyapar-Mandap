@@ -4,12 +4,15 @@ import {
   CheckCircle2, ArrowUpRight, ShieldCheck, Sparkles, Activity, Landmark, FileText, ArrowRight
 } from 'lucide-react';
 import { ActivityTimeline } from '../components/ActivityTimeline';
+import { useApp } from '../context/AppContext';
 
 interface DashboardProps {
   onOpenInvoiceReview: (invId: string) => void;
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({ onOpenInvoiceReview }) => {
+  const { user, organization } = useApp();
+
   const kpis = [
     {
       title: 'Revenue (YTD)',
@@ -49,10 +52,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ onOpenInvoiceReview }) => 
             <span>Financial Year 2026-2027 (Q2)</span>
           </div>
           <h1 className="text-xl font-bold text-slate-900 flex items-center space-x-2 tracking-tight">
-            <span>Welcome back, M/S Sharma Traders 👋</span>
+            <span>Welcome back, {organization.name} 👋</span>
           </h1>
           <p className="text-xs text-slate-600 mt-1 font-medium">
-            Posted journals balanced • 1 draft awaiting review
+            Posted journals balanced • 1 draft awaiting review ({user.name}, {user.role})
           </p>
         </div>
         <div className="flex items-center space-x-3">
@@ -72,7 +75,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onOpenInvoiceReview }) => 
           <div>
             <div className="flex items-center space-x-2 text-xs font-mono">
               <span className="text-amber-800 font-bold uppercase tracking-wider">High Priority Action Item</span>
-              <span className="text-slate-600 font-medium">• 1 Invoice Awaiting CA Signoff</span>
+              <span className="text-slate-600 font-medium">• 1 Invoice Awaiting CA Signoff ({user.name})</span>
             </div>
             <h3 className="text-base font-bold text-slate-900 mt-0.5">
               Approve Apex Technologies Invoice (#INV-2026-089)
@@ -179,7 +182,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onOpenInvoiceReview }) => 
           </div>
           <div className="bg-slate-100 p-2.5 rounded border border-slate-200">
             <span className="text-slate-500 text-[10px]">Filing Assignee</span>
-            <div className="font-bold text-slate-800 mt-0.5">CA John Sharma</div>
+            <div className="font-bold text-slate-800 mt-0.5">{user.role}: {user.name}</div>
           </div>
         </div>
       </div>

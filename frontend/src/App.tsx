@@ -10,8 +10,9 @@ import { GstTds } from './pages/GstTds';
 import { Reports } from './pages/Reports';
 import { AiCopilot } from './pages/AiCopilot';
 import { Settings } from './pages/Settings';
+import { AppProvider } from './context/AppContext';
 
-export function App() {
+export function MainLayout() {
   const [currentTab, setCurrentTab] = useState<string>('dashboard');
   const [isCmdOpen, setIsCmdOpen] = useState<boolean>(false);
   const [reviewInvoiceId, setReviewInvoiceId] = useState<string | null>(null);
@@ -30,7 +31,7 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-emerald-500/30 selection:text-emerald-400">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
       
       {/* Top Header */}
       <Navbar onOpenCommandPalette={() => setIsCmdOpen(true)} />
@@ -41,7 +42,7 @@ export function App() {
         <Sidebar currentTab={currentTab} setCurrentTab={setCurrentTab} />
 
         {/* Content Area */}
-        <main className="flex-1 min-w-0 bg-slate-950 overflow-y-auto min-h-[calc(100vh-4rem)]">
+        <main className="flex-1 min-w-0 bg-slate-50 overflow-y-auto min-h-[calc(100vh-4rem)]">
           {currentTab === 'dashboard' && <Dashboard onOpenInvoiceReview={handleOpenReview} />}
           {currentTab === 'invoices' && (
             <Invoices 
@@ -66,6 +67,14 @@ export function App() {
       />
 
     </div>
+  );
+}
+
+export function App() {
+  return (
+    <AppProvider>
+      <MainLayout />
+    </AppProvider>
   );
 }
 
