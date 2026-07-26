@@ -1,5 +1,7 @@
 import os
 import json
+import hashlib
+import time
 import logging
 from typing import Optional, Dict, Any
 from dotenv import load_dotenv
@@ -18,18 +20,78 @@ except ImportError:
     GENAI_AVAILABLE = False
     logger.warning("google.genai SDK not available.")
 
+
+class GeminiCacheManager:
+    """High-performance Disk & In-Memory Cache Manager to eliminate redundant Gemini API calls."""
+
+    def __init__(self, cache_file: str = "vyapar_gemini_cache.json", ttl_seconds: int = 3600 * 24):
+        self.cache_file = os.path.join(os.path.dirname(__file__), cache_file)
+        self.ttl_seconds = ttl_seconds
+        self.memory_cache: Dict[str, Dict[str, Any]] = {}
+        self._load_cache()
+
+    def _load_cache(self):
+        """Loads cached responses from persistent disk storage."""
+        if os.path.exists(self.cache_file):
+            try:
+                with open(self.cache_file, "r", encoding="utf-8") as f:
+                    self.memory_cache = json.load(f)
+                logger.info(f"Loaded {len(self.memory_cache)} cached items from {self.cache_file}")
+            except Exception as e:
+                logger.error(f"Error loading Gemini cache file: {e}")
+                self.memory_cache = {}
+
+    def _save_cache(self):
+        """Persists memory cache to disk."""
+        try:
+            with open(self.cache_file, "w", encoding="utf-8") as f:
+                json.dump(self.memory_cache, f, indent=2)
+        except Exception as e:
+            logger.error(f"Error saving Gemini cache file: {e}")
+
+    @staticmethod
+    def compute_hash(data: str) -> str:
+        """Generates a deterministic SHA256 hash for document content or user query."""
+        return hashlib.sha256(data.strip().encode("utf-8")).hexdigest()
+
+    def get(self, key_type: str, content: str) -> Optional[Any]:
+        """Retrieves cached response if key exists and has not expired."""
+        key = f"{key_type}:{self.compute_hash(content)}"
+        entry = self.memory_cache.get(key)
+        if entry:
+            timestamp = entry.get("timestamp", 0)
+            if time.time() - timestamp < self.ttl_seconds:
+                logger.info(f"⚡ [Gemini Cache Hit] Served '{key_type}' instantly (0 API tokens used).")
+                return entry.get("response")
+            else:
+                # Expired
+                del self.memory_cache[key]
+                self._save_cache()
+        return None
+
+    def set(self, key_type: str, content: str, response: Any):
+        """Stores Gemini API response in memory and disk cache."""
+        key = f"{key_type}:{self.compute_hash(content)}"
+        self.memory_cache[key] = {
+            "timestamp": time.time(),
+            "response": response
+        }
+        self._save_cache()
+
+
 class GeminiService:
-    """Specialized Google Gemini API service for Vyapar Mandap multi-agent operations."""
+    """Specialized Google Gemini API service for Vyapar Mandap with Cache Skills."""
 
     def __init__(self):
         self.api_key = os.getenv("GEMINI_API_KEY", "").strip()
         self.client = None
         self.model_name = "gemini-2.5-flash"
+        self.cache = GeminiCacheManager()
 
         if GENAI_AVAILABLE and self.api_key:
             try:
                 self.client = genai.Client(api_key=self.api_key)
-                logger.info("Initialized Google Gemini API client with gemini-2.5-flash")
+                logger.info("Initialized Google Gemini API client with gemini-2.5-flash + Cache Skills")
             except Exception as e:
                 logger.error(f"Failed to initialize Gemini Client: {e}")
 
@@ -38,8 +100,16 @@ class GeminiService:
         return self.client is not None
 
     def parse_invoice(self, raw_text: str, file_name: str = "") -> Optional[Dict[str, Any]]:
-        """Invokes Gemini 2.5 Flash to parse an invoice document into structured financial fields."""
-        if not self.is_active or not raw_text:
+        """Parses an invoice document with document hash caching."""
+        if not raw_text:
+            return None
+
+        # Check Cache Skill first!
+        cached_result = self.cache.get("invoice_parse", raw_text)
+        if cached_result:
+            return cached_result
+
+        if not self.is_active:
             return None
 
         prompt = f"""You are the Invoice AI Agent in Vyapar Mandap (an Indian multi-agent accounting SaaS).
@@ -86,13 +156,22 @@ Invoice Raw Content:
                 )
             )
             data = json.loads(response.text.strip())
+            # Save to Cache Skill
+            self.cache.set("invoice_parse", raw_text, data)
             return data
         except Exception as e:
             logger.error(f"Gemini invoice parsing error: {e}")
             return None
 
     def audit_gst(self, invoice_data: Dict[str, Any], org_gstin: str = "27AABCS9876E1Z2") -> Optional[Dict[str, Any]]:
-        """Invokes Gemini 2.5 Flash as the GST AI Agent to audit GSTIN validity and ITC rules."""
+        """Audits GST tax rules with transaction hash caching."""
+        cache_key_data = f"{org_gstin}:{invoice_data.get('vendor_gstin')}:{invoice_data.get('subtotal')}:{invoice_data.get('cgst')}:{invoice_data.get('sgst')}:{invoice_data.get('igst')}"
+        
+        # Check Cache Skill first!
+        cached_result = self.cache.get("gst_audit", cache_key_data)
+        if cached_result:
+            return cached_result
+
         if not self.is_active:
             return None
 
@@ -121,13 +200,23 @@ Return ONLY a strict JSON object with keys:
                     temperature=0.1
                 )
             )
-            return json.loads(response.text.strip())
+            res_data = json.loads(response.text.strip())
+            # Save to Cache Skill
+            self.cache.set("gst_audit", cache_key_data, res_data)
+            return res_data
         except Exception as e:
             logger.error(f"Gemini GST audit error: {e}")
             return None
 
     def query_copilot(self, user_query: str, financial_context: Dict[str, Any]) -> str:
-        """Invokes Gemini 2.5 Flash for conversational financial AI Copilot queries."""
+        """Invokes Gemini Copilot with prompt and query caching skills."""
+        cache_key_data = f"{user_query}:{json.dumps(financial_context, sort_keys=True)}"
+        
+        # Check Cache Skill first!
+        cached_result = self.cache.get("copilot_query", cache_key_data)
+        if cached_result:
+            return cached_result
+
         if not self.is_active:
             return f"I am your Vyapar Mandap AI Copilot. Audited ledger entries and verified double-entry constraints for: '{user_query}'."
 
@@ -149,7 +238,10 @@ Provide a concise, highly professional, accurate response highlighting verified 
                     temperature=0.3
                 )
             )
-            return response.text.strip()
+            res_text = response.text.strip()
+            # Save to Cache Skill
+            self.cache.set("copilot_query", cache_key_data, res_text)
+            return res_text
         except Exception as e:
             logger.error(f"Gemini Copilot error: {e}")
             return f"Vyapar Mandap AI Copilot: Audited double-entry ledger entries for '{user_query}'."
