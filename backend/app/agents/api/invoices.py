@@ -1,4 +1,3 @@
-from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
 from app.core.database import get_db
@@ -21,6 +20,7 @@ def list_invoices(db: Session = Depends(get_db)):
             "id": inv.id,
             "invoice_number": inv.invoice_number,
             "vendor_name": vendor.name if vendor else "Vendor",
+            "vendor_gstin": vendor.gstin if vendor else "",
             "invoice_date": inv.invoice_date,
             "due_date": inv.due_date,
             "subtotal": inv.subtotal,
@@ -40,7 +40,8 @@ def get_invoice_detail(invoice_id: str, db: Session = Depends(get_db)):
     vendor = db.query(Vendor).filter(Vendor.id == inv.vendor_id).first()
     items = db.query(InvoiceItem).filter(InvoiceItem.invoice_id == inv.id).all()
     gst = db.query(GSTRecord).filter(GSTRecord.invoice_id == inv.id).first()
-    je = db.query(JournalEntry).filter(JournalEntry.invoice_id == inv.id).first()
+    je = db.query(JournalEntry).filter(JournalEntry.invoice_id == inv.id).order_by(JournalEntry.created_at.desc()).first()
+    proposal = LedgerAgent(db, inv.organization_id).build_proposal(inv)
 
     return {
         "invoice": {
@@ -81,16 +82,27 @@ def get_invoice_detail(invoice_id: str, db: Session = Depends(get_db)):
         } if gst else None,
         "proposed_journal": {
             "entry_number": je.entry_number if je else "JE-DRAFT-PROPOSAL",
-            "narration": je.narration if je else f"Purchase bill from {vendor.name if vendor else 'Vendor'}"
-        }
+            "narration": je.narration if je else f"Purchase bill from {vendor.name if vendor else 'Vendor'}",
+            "status": je.status if je else "Draft",
+            "is_immutable": je.is_immutable if je else False,
+            "total_debit": sum(line["debit"] for line in proposal),
+            "total_credit": sum(line["credit"] for line in proposal),
+            "lines": proposal,
+        },
     }
 
 @router.post("/upload")
-def upload_invoice(file: UploadFile = File(...), db: Session = Depends(get_db)):
+async def upload_invoice(file: UploadFile = File(...), db: Session = Depends(get_db)):
+    if not file.filename:
+        raise HTTPException(status_code=422, detail="An invoice file is required")
+    contents = await file.read()
+    if not contents:
+        raise HTTPException(status_code=422, detail="The uploaded invoice file is empty")
     org = db.query(Organization).first()
     org_id = org.id if org else ""
     agent = InvoiceAgent(db, org_id)
-    result = agent.process_document(file.filename)
+    raw_text = contents[:50000].decode("utf-8", errors="ignore")
+    result = agent.process_document(file.filename, raw_text)
     return result
 
 @router.post("/{invoice_id}/approve")
@@ -98,5 +110,13 @@ def approve_invoice(invoice_id: str, db: Session = Depends(get_db)):
     org = db.query(Organization).first()
     org_id = org.id if org else ""
     agent = LedgerAgent(db, org_id)
-    journal = agent.create_journal_from_invoice(invoice_id)
-    return {"message": "Invoice approved & journal committed immutably.", "journal_id": journal.id if journal else ""}
+    try:
+        journal = agent.create_journal_from_invoice(invoice_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return {
+        "message": "Invoice approved and journal committed immutably.",
+        "journal_id": journal.id,
+        "entry_number": journal.entry_number,
+        "status": journal.status,
+    }
