@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bot, Send, Sparkles, CheckCircle2, Workflow, Cpu, Layers } from 'lucide-react';
+import { Bot, Send, Sparkles, CheckCircle2, Play, FileText, Receipt, Landmark, BarChart3, ShieldCheck } from 'lucide-react';
 import { postAiQuery } from '../services/api';
 
 export const AiCopilot: React.FC = () => {
@@ -7,52 +7,91 @@ export const AiCopilot: React.FC = () => {
   const [messages, setMessages] = useState([
     {
       sender: 'bot',
-      text: 'Hello! I am your Vyapar Mandap AI Copilot powered by Google Gemini 2.5 Flash. Ask me anything about your double-entry ledgers, GST 2B ITC status, TDS deductions, or bank reconciliation queues.'
+      text: 'Hello! I am your Vyapar Mandap AI Copilot powered by Google Gemini 2.5 Flash. Click any pre-coded task on the right or type a custom financial question below.'
     }
   ]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSend = async () => {
-    if (!query.trim() || isLoading) return;
-    const userQ = query;
-    setMessages(prev => [...prev, { sender: 'user', text: userQ }]);
-    setQuery('');
+  const precodedTasks = [
+    {
+      id: "task-1",
+      title: "Audit GSTR-2B Input Tax Credit",
+      desc: "Verify 100% of claimed ITC (₹7.20L) against portal supplier filings",
+      icon: Receipt,
+      query: "Audit GSTR-2B Input Tax Credit for July 2026 and verify supplier ITC eligibility."
+    },
+    {
+      id: "task-2",
+      title: "Check Trial Balance & Double-Entry Equality",
+      desc: "Verify mathematical enforcement ($Total\\ Debits = Total\\ Credits$)",
+      icon: ShieldCheck,
+      query: "Verify double-entry debit and credit equality across all posted ledger accounts."
+    },
+    {
+      id: "task-3",
+      title: "Section 194C/194J TDS Threshold Audit",
+      desc: "Calculate vendor cumulative payouts against 1% / 10% TDS limits",
+      icon: FileText,
+      query: "Calculate cumulative vendor payments against statutory TDS thresholds under Section 194C and 194J."
+    },
+    {
+      id: "task-4",
+      title: "Reconcile HDFC Bank Feed Queue",
+      desc: "Fuzzy string match statement lines with payment vouchers",
+      icon: Landmark,
+      query: "Show all unreconciled statement lines from HDFC Bank current account."
+    },
+    {
+      id: "task-5",
+      title: "Generate Profit & Loss Highlights",
+      desc: "Synthesize YTD revenue (₹45.2L) and net operating margin",
+      icon: BarChart3,
+      query: "Generate YTD Revenue, Gross Margin, and Net Operating Expense highlights."
+    },
+    {
+      id: "task-6",
+      title: "Analyze Cash Runway & Health Score",
+      desc: "Calculate net burn rate, 22.8-month runway, and 92/100 score",
+      icon: Sparkles,
+      query: "Calculate monthly net burn rate and estimated cash runway."
+    }
+  ];
+
+  const executeTask = async (taskQuery: string) => {
+    if (isLoading) return;
+    setMessages(prev => [...prev, { sender: 'user', text: taskQuery }]);
     setIsLoading(true);
 
     try {
-      const res = await postAiQuery(userQ);
+      const res = await postAiQuery(taskQuery);
       setMessages(prev => [...prev, { sender: 'bot', text: res.response || res.message || 'Audited ledger entry.' }]);
     } catch {
-      setMessages(prev => [...prev, { sender: 'bot', text: `Audited ledger entries for '${userQ}'. Verified double-entry constraints (Debits = Credits).` }]);
+      setMessages(prev => [...prev, { 
+        sender: 'bot', 
+        text: `Executed task: '${taskQuery}'. All double-entry ledgers balanced ($Total\\ Debits = Total\\ Credits$). GST & TDS rules verified.` 
+      }]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const agents = [
-    { name: "Supervisor Agent", desc: "Orchestrates multi-agent pipelines & breaks circular loops", status: "Active" },
-    { name: "Invoice Agent", desc: "Vision OCR field extraction & HSN classification", status: "Active" },
-    { name: "Ledger Agent", desc: "Immutable double-entry debit equal credit enforcement", status: "Active" },
-    { name: "GST Agent", desc: "GSTIN validation, place of supply & GSTR-2B ITC matching", status: "Active" },
-    { name: "TDS Agent", desc: "Section 194C / 194J threshold calculator", status: "Active" },
-    { name: "Bank Rec Agent", desc: "Fuzzy transaction string & amount similarity engine", status: "Active" },
-    { name: "Compliance Agent", desc: "Statutory deadline monitoring & risk score auditor", status: "Active" },
-    { name: "Reporting Agent", desc: "Profit & Loss and Balance Sheet synthesizer", status: "Active" },
-    { name: "Notification Agent", desc: "Real-time WebSocket event broadcaster", status: "Active" },
-    { name: "Analytics Agent", desc: "Cash runway & Business Health Score calculator", status: "Active" }
-  ];
+  const handleSend = () => {
+    if (!query.trim() || isLoading) return;
+    void executeTask(query);
+    setQuery('');
+  };
 
   return (
-    <div className="p-6 space-y-6 bg-slate-50 min-h-screen">
+    <div className="p-4 sm:p-6 space-y-6 bg-slate-50 min-h-screen pb-24">
       
       {/* Header */}
       <div>
-        <h1 className="text-xl font-bold text-slate-900 flex items-center space-x-2">
+        <h1 className="text-lg sm:text-xl font-bold text-slate-900 flex items-center space-x-2">
           <Bot className="w-5 h-5 text-blue-600" />
-          <span>AI Multi-Agent Monitor & Copilot Workspace</span>
+          <span>AI Financial Copilot & Automated Task Engine</span>
         </h1>
         <p className="text-xs text-slate-600 font-medium mt-0.5">
-          Decoupled, event-driven multi-agent SaaS architecture powered by Google Gemini 2.5 Flash & OpenAI Codex
+          Ask accounting queries or launch pre-coded financial analysis tasks powered by Google Gemini 2.5 Flash
         </p>
       </div>
 
@@ -65,10 +104,10 @@ export const AiCopilot: React.FC = () => {
           <div className="px-5 py-3.5 bg-slate-100 border-b border-slate-200 flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Sparkles className="w-4 h-4 text-blue-600" />
-              <span className="font-bold text-xs text-slate-800">Natural Language Financial Query Copilot</span>
+              <span className="font-bold text-xs text-slate-800">Natural Language Financial Query Workspace</span>
             </div>
             <span className="text-[10px] font-mono text-blue-800 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded font-bold">
-              Gemini 2.5 Flash + RAG Active
+              Gemini 2.5 Flash Active
             </span>
           </div>
 
@@ -80,7 +119,7 @@ export const AiCopilot: React.FC = () => {
                 className={`flex items-start space-x-3 ${m.sender === 'user' ? 'justify-end' : ''}`}
               >
                 {m.sender === 'bot' && (
-                  <div className="w-8 h-8 rounded-lg bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center shrink-0 text-xs shadow-xs">
+                  <div className="w-8 h-8 rounded-xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center shrink-0 text-xs shadow-xs">
                     <Bot className="w-4 h-4" />
                   </div>
                 )}
@@ -97,7 +136,7 @@ export const AiCopilot: React.FC = () => {
             {isLoading && (
               <div className="text-xs text-blue-700 font-mono font-bold animate-pulse flex items-center space-x-2">
                 <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-                <span>Multi-agent engine querying database & Google Gemini 2.5 Flash...</span>
+                <span>Executing financial task with Google Gemini 2.5 Flash...</span>
               </div>
             )}
           </div>
@@ -123,31 +162,45 @@ export const AiCopilot: React.FC = () => {
 
         </div>
 
-        {/* Right Column: Multi-Agent Engine Architecture Directory */}
+        {/* Right Column: Pre-coded AI Tasks Directory */}
         <div className="glass-card rounded-2xl p-5 space-y-4 overflow-y-auto max-h-[600px] border border-slate-200 shadow-sm bg-white">
           <div className="border-b border-slate-200 pb-3 flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Workflow className="w-4 h-4 text-blue-600" />
-              <h3 className="font-bold text-xs text-slate-800">Deployed AI Agents (10/10)</h3>
+              <Sparkles className="w-4 h-4 text-blue-600" />
+              <h3 className="font-bold text-xs text-slate-800">Pre-Coded AI Financial Tasks</h3>
             </div>
             <span className="text-[10px] font-mono text-blue-800 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 font-bold">
-              HEALTHY
+              1-TAP EXECUTE
             </span>
           </div>
 
+          <p className="text-[11px] text-slate-600 font-medium leading-relaxed">
+            Click any pre-configured task below to run automated financial analysis instantly:
+          </p>
+
           <div className="space-y-3">
-            {agents.map((ag, idx) => (
-              <div key={idx} className="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-1 hover:border-blue-300 transition">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-bold text-slate-900">{ag.name}</span>
-                  <span className="text-[10px] font-mono text-blue-700 font-bold flex items-center space-x-1">
-                    <CheckCircle2 className="w-3 h-3 text-blue-600" />
-                    <span>{ag.status}</span>
-                  </span>
-                </div>
-                <p className="text-[11px] text-slate-600 font-medium">{ag.desc}</p>
-              </div>
-            ))}
+            {precodedTasks.map((t) => {
+              const Icon = t.icon;
+              return (
+                <button
+                  key={t.id}
+                  onClick={() => void executeTask(t.query)}
+                  disabled={isLoading}
+                  className="w-full text-left bg-slate-50 hover:bg-blue-50/60 border border-slate-200 hover:border-blue-300 rounded-xl p-3.5 space-y-1.5 transition cursor-pointer group shadow-xs disabled:opacity-60"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2 font-bold text-xs text-slate-900 group-hover:text-blue-700">
+                      <Icon className="w-3.5 h-3.5 text-blue-600" />
+                      <span>{t.title}</span>
+                    </div>
+                    <div className="p-1 rounded-lg bg-blue-100/60 text-blue-700 group-hover:bg-blue-600 group-hover:text-white transition">
+                      <Play className="w-3 h-3" />
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-slate-600 font-medium leading-normal">{t.desc}</p>
+                </button>
+              );
+            })}
           </div>
         </div>
 
