@@ -10,21 +10,21 @@ def create_presentation():
     prs.slide_width = Inches(13.333)
     prs.slide_height = Inches(7.5)
 
-    # ========== DESIGN TOKENS (Polished Modern SaaS Palette) ==========
-    C_EMERALD = RGBColor(16, 185, 129)    # Success / Green Accent
-    C_NAVY = RGBColor(15, 23, 42)         # Primary Dark Text
-    C_INDIGO = RGBColor(67, 56, 202)      # Primary Indigo Accent
+    # ========== DESIGN TOKENS (Modern High-Contrast SaaS Palette) ==========
+    C_EMERALD = RGBColor(16, 185, 129)    # Growth / Success Accent
+    C_NAVY = RGBColor(15, 23, 42)         # Primary Dark Text / Headers
+    C_INDIGO = RGBColor(67, 56, 202)      # Brand Accent / Primary Buttons
     C_WHITE = RGBColor(255, 255, 255)
-    C_BG_GRAY = RGBColor(248, 250, 252)   # Subtle Grey Background
+    C_BG_GRAY = RGBColor(248, 250, 252)   # Subtle Page Background
     C_CARD_BG = RGBColor(255, 255, 255)
-    C_BORDER = RGBColor(226, 232, 240)    # Subtle 1px Border
-    C_TEXT_MUTED = RGBColor(100, 116, 139) # Secondary Muted Text
-    C_ACCENT_RED = RGBColor(220, 38, 38)   # Warning Red
-    C_ACCENT_BLUE = RGBColor(37, 99, 235)  # Trust Blue
-    SHADOW_COLOR = RGBColor(235, 240, 245) # Soft Drop Shadow
+    C_BORDER = RGBColor(226, 232, 240)    # 1px Container Border
+    C_TEXT_MUTED = RGBColor(100, 116, 139) # Secondary Subtitle Text
+    C_ACCENT_RED = RGBColor(220, 38, 38)   # Alert / Problem Red
+    C_ACCENT_BLUE = RGBColor(37, 99, 235)  # Trust / AI Blue
+    SHADOW_COLOR = RGBColor(235, 240, 245) # Subtle Card Drop Shadow
 
     def add_drop_shadow(slide, x, y, width, height):
-        """Draws subtle background drop-shadow rectangle behind cards"""
+        """Draws a subtle background drop-shadow rectangle behind cards"""
         shadow = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, x + Inches(0.04), y + Inches(0.04), width, height)
         shadow.fill.solid()
         shadow.fill.fore_color.rgb = SHADOW_COLOR
@@ -32,7 +32,7 @@ def create_presentation():
         return shadow
 
     def add_button(slide, text, x, y, width, height, color=C_INDIGO):
-        """Draws crisp button element"""
+        """Draws a crisp action button"""
         btn = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, x, y, width, height)
         btn.fill.solid()
         btn.fill.fore_color.rgb = color
@@ -54,7 +54,7 @@ def create_presentation():
     blank = prs.slide_layouts[6]
 
     def add_header(slide, title, subtitle, accent_color=C_INDIGO):
-        """Header with top background bar and accent border"""
+        """Header bar with accent border"""
         bar = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, Inches(13.333), Inches(1.3))
         bar.fill.solid()
         bar.fill.fore_color.rgb = C_BG_GRAY
@@ -84,37 +84,36 @@ def create_presentation():
             p2.font.name = "Inter"
 
     # ==========================================
-    # SLIDE 1: Hero / Title
+    # SLIDE 1: Hero & Vision (Codex Architecture)
     # ==========================================
     slide1 = prs.slides.add_slide(blank)
-    
-    bg = slide1.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, Inches(13.333), Inches(7.5))
-    bg.fill.solid()
-    bg.fill.fore_color.rgb = C_BG_GRAY
-    bg.line.fill.background()
+    bg1 = slide1.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, Inches(13.333), Inches(7.5))
+    bg1.fill.solid()
+    bg1.fill.fore_color.rgb = C_BG_GRAY
+    bg1.line.fill.background()
 
-    # Left Column Text
+    # Title Column
     t_box = slide1.shapes.add_textbox(Inches(0.8), Inches(1.5), Inches(6.5), Inches(4.5))
-    tf = t_box.text_frame
-    tf.word_wrap = True
+    tf1 = t_box.text_frame
+    tf1.word_wrap = True
     
-    p = tf.paragraphs[0]
+    p = tf1.paragraphs[0]
     p.text = "VYAPAR MANDAP"
     p.font.size = Pt(40)
     p.font.bold = True
     p.font.color.rgb = C_NAVY
     p.font.name = "Inter"
 
-    p2 = tf.add_paragraph()
-    p2.text = "Modern Multi-Agent Double-Entry Accounting Platform"
+    p2 = tf1.add_paragraph()
+    p2.text = "Built Using Codex AI Engine Architecture"
     p2.font.size = Pt(18)
     p2.font.bold = True
     p2.font.color.rgb = C_INDIGO
     p2.font.name = "Inter"
     p2.space_before = Pt(8)
 
-    p3 = tf.add_paragraph()
-    p3.text = "Powered by Google Gemini 2.5 Flash Vision OCR, deterministic ledger engine, and real-time GST/TDS compliance tracking."
+    p3 = tf1.add_paragraph()
+    p3.text = "Engineered with OpenAI Codex intelligence, coupling vision OCR parsing with a deterministic double-entry ledger core (Debits = Credits) and 1-click CA human approvals."
     p3.font.size = Pt(13)
     p3.font.color.rgb = C_TEXT_MUTED
     p3.font.name = "Inter"
@@ -122,14 +121,14 @@ def create_presentation():
 
     add_button(slide1, "Explore Live Platform", Inches(0.8), Inches(5.6), Inches(3.0), Inches(0.65), C_EMERALD)
 
-    # Right Column Metrics
-    metrics = [
-        ("10 AI Agents", "Decoupled execution graph for invoice, ledger & tax audits"),
-        ("22 ORM Models", "Immutable double-entry schema with complete audit logs"),
-        ("Google Gemini 2.5", "Vision OCR extraction & RAG financial query copilot")
+    # Key Value Metric Cards
+    hero_cards = [
+        ("Codex AI Engine", "Advanced code-grade intelligence for Vision OCR invoice parsing & rule reasoning"),
+        ("Double-Entry Core Engine", "Mathematical equality enforcement ensuring $Total\\ Debits = Total\\ Credits$"),
+        ("Hybrid Cloud Infrastructure", "Supabase Central DB + Client Device Storage + Vercel & Render")
     ]
 
-    for i, (val, desc) in enumerate(metrics):
+    for i, (val, desc) in enumerate(hero_cards):
         y_m = Inches(1.5) + i * 1.7
         add_drop_shadow(slide1, Inches(7.6), y_m, Inches(4.9), Inches(1.5))
         
@@ -149,7 +148,7 @@ def create_presentation():
         
         pm = tf_m.paragraphs[0]
         pm.text = val
-        pm.font.size = Pt(18)
+        pm.font.size = Pt(17)
         pm.font.bold = True
         pm.font.color.rgb = C_NAVY
         pm.font.name = "Inter"
@@ -162,12 +161,11 @@ def create_presentation():
         pm2.space_before = Pt(4)
 
     # ==========================================
-    # SLIDE 2: The Manual Trap (Problem)
+    # SLIDE 2: The Current Problem
     # ==========================================
     slide2 = prs.slides.add_slide(blank)
-    add_header(slide2, "The Problem: Broken Manual Bookkeeping & Statutory Risk", "Operational inefficiencies faced by 63+ Million MSMEs in India", C_ACCENT_RED)
+    add_header(slide2, "The Current Problem: Manual Accounting & Tax Risks", "Operational bottlenecks faced by 63+ Million MSMEs in India", C_ACCENT_RED)
     
-    # Alert Warning Box
     alert = slide2.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(1.6), Inches(11.73), Inches(0.75))
     alert.fill.solid()
     alert.fill.fore_color.rgb = RGBColor(254, 242, 242)
@@ -176,20 +174,19 @@ def create_presentation():
     tf_alert = alert.text_frame
     tf_alert.word_wrap = True
     p = tf_alert.paragraphs[0]
-    p.text = "[!] Critical Industry Warning: Manual invoice entry, un-tracked vendor TDS limits, and GSTR-2B discrepancies cause millions in lost tax credit and statutory audit notices."
+    p.text = "[!] Critical Pain Point: Manual invoice entry, un-tracked vendor TDS limits, and GSTR-2B discrepancies cause millions in lost tax credit and statutory interest notices."
     p.font.size = Pt(12)
     p.font.bold = True
     p.font.color.rgb = C_ACCENT_RED
     p.font.name = "Inter"
 
-    # Problem Cards
     issues = [
-        ("100+ Hours Wasted Monthly", "Accountants manually transcribe PDF bills and paper receipts line-by-line across disconnected spreadsheets, causing high human error rates.", C_ACCENT_RED),
-        ("GSTR-2B ITC Loss & Interest Fines", "Discrepancies between supplier filings and internal accounts result in 18% lost Input Tax Credit (ITC) and statutory interest penalties.", C_ACCENT_RED),
-        ("Complex TDS Limits & Naive AI Risk", "Section 194C (1%/2%) & Section 194J (10%) limits are missed across vendors. Standard LLMs hallucinate numbers and break debit=credit balance rules.", C_ACCENT_RED)
+        ("100+ Hours Lost to Manual Data Entry", "Accountants manually transcribe PDF bills, physical receipts, and paper vouchers line-by-line across disconnected spreadsheets, causing high human error rates."),
+        ("18% GSTR-2B Input Tax Credit (ITC) Loss", "Discrepancies between supplier portal filings and internal ledger accounts result in lost Input Tax Credit (ITC) and costly statutory audit interest penalties."),
+        ("Complex Section 194C/194J TDS Thresholds", "Cumulative vendor payment thresholds (Section 194C 1%/2% & Section 194J 10%) are missed across suppliers. Naive LLMs hallucinate numbers and break debit=credit equality.")
     ]
     
-    for i, (title, desc, col) in enumerate(issues):
+    for i, (title, desc) in enumerate(issues):
         y_pos = Inches(2.55) + (i * 1.55)
         add_drop_shadow(slide2, Inches(0.8), y_pos, Inches(11.73), Inches(1.35))
         
@@ -200,7 +197,7 @@ def create_presentation():
         
         strip = slide2.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), y_pos, Pt(4), Inches(1.35))
         strip.fill.solid()
-        strip.fill.fore_color.rgb = col
+        strip.fill.fore_color.rgb = C_ACCENT_RED
         strip.line.fill.background()
         
         tx = slide2.shapes.add_textbox(Inches(1.1), y_pos + Inches(0.15), Inches(11.2), Inches(1.05))
@@ -222,15 +219,15 @@ def create_presentation():
         p2.space_before = Pt(4)
 
     # ==========================================
-    # SLIDE 3: Four Pillars (The Solution)
+    # SLIDE 3: Our Approach (Four Integrity Pillars)
     # ==========================================
     slide3 = prs.slides.add_slide(blank)
-    add_header(slide3, "The Solution: Four Pillars of Accounting Integrity", "Decoupled architecture bridging unstructured inputs with deterministic accounting cores", C_INDIGO)
+    add_header(slide3, "Our Approach: Four Pillars of Accounting Integrity", "Bridging unstructured document inputs with deterministic accounting engines", C_INDIGO)
     
     pillars = [
-        ("1. Vision OCR & Gemini 2.5", "98%+ Accurate Invoice Extraction", ["Google Gemini 2.5 Flash Vision engine", "SHA256 disk caching (0ms repeat latency)", "Auto-flags low-confidence (<85%) fields"]),
-        ("2. Double-Entry Core Engine", "Strict Debit = Credit Enforcement", ["Strict mathematical balance verification", "Zero balance violation guarantee ($Dr = Cr$)", "Cryptographic immutable transaction logs"]),
-        ("3. Human-in-the-Loop Signoff", "CA Verified Ledger Approvals", ["Split-screen PDF viewer + proposed journal", "1-click approval or rejection comments", "Audit trail logs every reviewer action"]),
+        ("1. Vision OCR & Codex Engine", "98%+ Accurate Invoice Extraction", ["Codex AI vision parsing architecture", "SHA256 document hashing (0ms repeat latency)", "Auto-flags low-confidence (<85%) field extractions"]),
+        ("2. Double-Entry Core Engine", "Strict Debit = Credit Enforcement", ["Strict mathematical balance verification", "Zero balance violation guarantee ($Dr = Cr$)", "Cryptographic immutable transaction log"]),
+        ("3. Human-in-the-Loop Signoff", "CA Verified Ledger Approvals", ["Split-screen PDF viewer + proposed journal", "1-click approval or rejection comments", "Complete audit trail logs every reviewer action"]),
         ("4. Statutory GST & TDS Engine", "Automated Compliance & Audit", ["Real-time 15-char GSTIN syntax check", "GSTR-1, GSTR-3B & GSTR-2B ITC matching", "Section 194C (1%/2%) & 194J (10%) TDS tracker"])
     ]
     
@@ -280,14 +277,63 @@ def create_presentation():
             p3.font.name = "Inter"
 
     # ==========================================
-    # SLIDE 4: The Golden Path Workflow
+    # SLIDE 4: AI Integration & Codex Task Engine
     # ==========================================
     slide4 = prs.slides.add_slide(blank)
-    add_header(slide4, "The Golden Path Workflow", "End-to-End PDF Document Ingestion to Immutable Ledger Commit", C_EMERALD)
+    add_header(slide4, "AI Integration & Codex Task Engine", "Combining OpenAI Codex Architecture with 1-Tap Financial Analysis", C_ACCENT_BLUE)
+    
+    ai_features = [
+        ("Codex AI Vision OCR", "Ingests PDF invoices, receipts, and image bills, extracting vendor name, GSTIN, line-item tax split, and grand totals with 99% accuracy."),
+        ("Pre-Coded AI Task Shortcuts", "1-tap task triggers: Audit GSTR-2B ITC, Check Trial Balance Equality, Calculate Section 194C/194J Limits, Reconcile Bank Feed, P&L Highlights."),
+        ("Automated Compliance Rules", "Executes 15-char GSTIN syntax verification, duplicate SHA256 document detection, and double-entry mathematical constraint checks."),
+        ("Natural Language Financial Query", "Interactive AI Copilot allowing Chartered Accountants to query cash runway, un-posted vouchers, and tax return filing deadlines.")
+    ]
+    
+    for i, (title, desc) in enumerate(ai_features):
+        col = i % 2
+        row = i // 2
+        y = Inches(1.6) + row * 2.75
+        x = Inches(0.8) + (col * 6.0)
+        
+        add_drop_shadow(slide4, x, y, Inches(5.7), Inches(2.55))
+        
+        card = slide4.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, x, y, Inches(5.7), Inches(2.55))
+        card.fill.solid()
+        card.fill.fore_color.rgb = C_CARD_BG
+        card.line.color.rgb = C_BORDER
+        
+        strip = slide4.shapes.add_shape(MSO_SHAPE.RECTANGLE, x, y, Pt(4), Inches(2.55))
+        strip.fill.solid()
+        strip.fill.fore_color.rgb = C_ACCENT_BLUE
+        strip.line.fill.background()
+        
+        tx = slide4.shapes.add_textbox(x + Inches(0.3), y + Inches(0.2), Inches(5.1), Inches(2.15))
+        tf_f = tx.text_frame
+        tf_f.word_wrap = True
+        
+        p = tf_f.paragraphs[0]
+        p.text = title
+        p.font.size = Pt(15)
+        p.font.bold = True
+        p.font.color.rgb = C_NAVY
+        p.font.name = "Inter"
+        
+        p2 = tf_f.add_paragraph()
+        p2.text = desc
+        p2.font.size = Pt(11)
+        p2.font.color.rgb = C_TEXT_MUTED
+        p2.font.name = "Inter"
+        p2.space_before = Pt(8)
+
+    # ==========================================
+    # SLIDE 5: The Golden Path Workflow
+    # ==========================================
+    slide5 = prs.slides.add_slide(blank)
+    add_header(slide5, "The Golden Path Workflow", "End-to-End Ingestion, AI Parsing, CA Signoff & Immutable Ledger Commit", C_EMERALD)
     
     steps = [
         ("Step 1: Upload", "Ingest PDF / Image", ["User drops PDF bill or receipt image", "Generates unique SHA256 hash", "Prevents duplicate invoice ingestion"]),
-        ("Step 2: AI Parse", "Extract & Audit Tax", ["Gemini 2.5 Flash extracts fields", "GST Agent validates 15-char GSTIN", "Verifies GSTR-2B ITC eligibility"]),
+        ("Step 2: AI Parse", "Extract & Audit Tax", ["Codex AI engine extracts fields", "GST engine validates 15-char GSTIN", "Verifies GSTR-2B ITC eligibility"]),
         ("Step 3: Human Review", "CA Signoff Checkpoint", ["Split-screen PDF viewer + journal", "Validates $Dr. Exp + Dr. Tax = Cr. AP$", "1-click approve or reject with comments"]),
         ("Step 4: Commit", "Immutable Ledger", ["Double-entry posted to database", "Journal marked immutable", "P&L and Balance Sheet update live"])
     ]
@@ -297,19 +343,19 @@ def create_presentation():
     for i, (title, sub, feats) in enumerate(steps):
         x_pos = Inches(0.8) + (i * 2.95)
         
-        add_drop_shadow(slide4, x_pos, y_pos, Inches(2.75), Inches(5.4))
+        add_drop_shadow(slide5, x_pos, y_pos, Inches(2.75), Inches(5.4))
         
-        card = slide4.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, x_pos, y_pos, Inches(2.75), Inches(5.4))
+        card = slide5.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, x_pos, y_pos, Inches(2.75), Inches(5.4))
         card.fill.solid()
         card.fill.fore_color.rgb = C_CARD_BG
         card.line.color.rgb = C_BORDER
         
-        badge = slide4.shapes.add_shape(MSO_SHAPE.OVAL, x_pos + Inches(1.05), y_pos + Inches(0.2), Inches(0.65), Inches(0.65))
+        badge = slide5.shapes.add_shape(MSO_SHAPE.OVAL, x_pos + Inches(1.05), y_pos + Inches(0.2), Inches(0.65), Inches(0.65))
         badge.fill.solid()
         badge.fill.fore_color.rgb = C_EMERALD
         badge.line.fill.background()
 
-        badge_txt = slide4.shapes.add_textbox(x_pos + Inches(1.05), y_pos + Inches(0.2), Inches(0.65), Inches(0.65))
+        badge_txt = slide5.shapes.add_textbox(x_pos + Inches(1.05), y_pos + Inches(0.2), Inches(0.65), Inches(0.65))
         tf_b = badge_txt.text_frame
         pb = tf_b.paragraphs[0]
         pb.text = str(i + 1)
@@ -318,7 +364,7 @@ def create_presentation():
         pb.font.color.rgb = C_WHITE
         pb.alignment = PP_ALIGN.CENTER
         
-        tx = slide4.shapes.add_textbox(x_pos + Inches(0.2), y_pos + Inches(0.95), Inches(2.35), Inches(4.3))
+        tx = slide5.shapes.add_textbox(x_pos + Inches(0.2), y_pos + Inches(0.95), Inches(2.35), Inches(4.3))
         tf_s = tx.text_frame
         tf_s.word_wrap = True
         
@@ -347,33 +393,33 @@ def create_presentation():
             p3.space_before = Pt(4)
 
     # ==========================================
-    # SLIDE 5: Production System Architecture
+    # SLIDE 6: Production Infrastructure & Hybrid Storage
     # ==========================================
-    slide5 = prs.slides.add_slide(blank)
-    add_header(slide5, "Production-Grade System Architecture", "Decoupled full-stack SaaS platform built with FastAPI, React 18 & Google Gemini 2.5", C_INDIGO)
+    slide6 = prs.slides.add_slide(blank)
+    add_header(slide6, "Production Infrastructure & Hybrid Storage", "Full-Stack Cloud Architecture (Vercel + Render + Supabase)", C_INDIGO)
     
-    layers = [
-        ("Client Tier (React 18 + Vite + Tailwind CSS)", "Light Grey & Trust Blue Theme (#2563EB) • Interactive AppContext global state • Command Palette (Cmd+K) & PDF Canvas Viewer • Real-time Agent Event Ticker"),
-        ("FastAPI Core Cluster (Python 3.11+)", "Asynchronous REST API endpoints (/api/v1/invoices, /journals, /gst, /reports) • Real-time WebSockets streaming server (/ws/ai/stream) • Pydantic v2 data validation schemas"),
-        ("AI & LLM Services (Google Gemini 2.5 Flash)", "Google Gemini 2.5 Flash SDK (google.genai) • Vision OCR invoice field extraction • Prompt caching & SHA256 disk cache (0ms repeat responses)"),
-        ("Data & Storage Engine (22 Relational Models)", "PostgreSQL 16 / SQLite 3 Relational Engine (22 SQLAlchemy ORM models) • Redis task queue & S3 document storage • Immutable audit log table")
+    infra = [
+        ("Vercel Frontend CDN (React 18 + Vite)", "Global CDN static hosting with Mobile Navigation Drawer, responsive table-to-card transformations, and Command Palette (Cmd+K)."),
+        ("Render FastAPI Backend (Python 3.11)", "Asynchronous Python 3.11 ASGI service executing Codex AI Vision OCR, fuzzy bank matching, and Pydantic validation."),
+        ("Supabase Cloud Database (PostgreSQL)", "Central cloud database storing registered User Profiles (`profiles`) and Firm Entity Masters (`organizations`) with Row-Level Security."),
+        ("Client Device Local Storage (localStorage)", "Stores active workspace session state, draft invoice uploads, and UI filters for instant 0ms page loads and offline resilience.")
     ]
     
-    for i, (layer, tech) in enumerate(layers):
+    for i, (layer, tech) in enumerate(infra):
         y = Inches(1.55) + i * 1.38
-        add_drop_shadow(slide5, Inches(0.8), y, Inches(11.73), Inches(1.22))
+        add_drop_shadow(slide6, Inches(0.8), y, Inches(11.73), Inches(1.22))
         
-        box = slide5.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), y, Inches(11.73), Inches(1.22))
+        box = slide6.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), y, Inches(11.73), Inches(1.22))
         box.fill.solid()
         box.fill.fore_color.rgb = C_CARD_BG
         box.line.color.rgb = C_BORDER
         
-        strip = slide5.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), y, Pt(4), Inches(1.22))
+        strip = slide6.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), y, Pt(4), Inches(1.22))
         strip.fill.solid()
         strip.fill.fore_color.rgb = C_INDIGO
         strip.line.fill.background()
         
-        tx = slide5.shapes.add_textbox(Inches(1.1), y + Inches(0.12), Inches(11.3), Inches(1.0))
+        tx = slide6.shapes.add_textbox(Inches(1.1), y + Inches(0.12), Inches(11.3), Inches(1.0))
         tf_l = tx.text_frame
         tf_l.word_wrap = True
         
@@ -392,71 +438,15 @@ def create_presentation():
         p2.space_before = Pt(4)
 
     # ==========================================
-    # SLIDE 6: The 10 Specialized AI Agents Roster
-    # ==========================================
-    slide6 = prs.slides.add_slide(blank)
-    add_header(slide6, "The 10 Specialized AI Agents Roster", "Decoupled execution graph with focused context scoping and zero token bloat", C_INDIGO)
-    
-    agents = [
-        ("Supervisor Agent", "Orchestrates execution graph & human approval checkpoints"),
-        ("Invoice Agent", "Vision OCR extraction & HSN/SAC code classification"),
-        ("Ledger Agent", "Immutable double-entry debit equal credit equality"),
-        ("GST Agent", "Validates 15-char GSTINs & GSTR-2B ITC eligibility"),
-        ("TDS Agent", "Section 194C/194J cumulative vendor limit calculator"),
-        ("Bank Rec Agent", "Fuzzy string & amount similarity matching engine"),
-        ("Compliance Agent", "Statutory filing calendar & penalty risk score auditor"),
-        ("Reporting Agent", "Synthesizes certified P&L and Balance Sheet"),
-        ("Notification Agent", "Real-time WebSocket event stream broadcaster"),
-        ("Analytics Agent", "Calculates 92/100 Health Score & cash runway")
-    ]
-    
-    cols = 5
-    for i, (name, desc) in enumerate(agents):
-        col = i % cols
-        row = i // cols
-        x = Inches(0.8) + (col * 2.38)
-        y = Inches(1.6) + (row * 2.65)
-        
-        add_drop_shadow(slide6, x, y, Inches(2.25), Inches(2.45))
-        
-        card = slide6.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, x, y, Inches(2.25), Inches(2.45))
-        card.fill.solid()
-        card.fill.fore_color.rgb = C_CARD_BG
-        card.line.color.rgb = C_BORDER
-        
-        top_bar = slide6.shapes.add_shape(MSO_SHAPE.RECTANGLE, x, y, Inches(2.25), Pt(4))
-        top_bar.fill.solid()
-        top_bar.fill.fore_color.rgb = C_INDIGO
-        top_bar.line.fill.background()
-        
-        tx = slide6.shapes.add_textbox(x + Inches(0.12), y + Inches(0.15), Inches(2.0), Inches(2.15))
-        tf_a = tx.text_frame
-        tf_a.word_wrap = True
-        
-        p = tf_a.paragraphs[0]
-        p.text = name
-        p.font.size = Pt(13)
-        p.font.bold = True
-        p.font.color.rgb = C_NAVY
-        p.font.name = "Inter"
-        
-        p2 = tf_a.add_paragraph()
-        p2.text = desc
-        p2.font.size = Pt(10)
-        p2.font.color.rgb = C_TEXT_MUTED
-        p2.font.name = "Inter"
-        p2.space_before = Pt(6)
-
-    # ==========================================
-    # SLIDE 7: Strategic Roadmap & Product Vision
+    # SLIDE 7: Strategic Roadmap & Future Expansion
     # ==========================================
     slide7 = prs.slides.add_slide(blank)
-    add_header(slide7, "Strategic Product Roadmap", "Phased deployment plan for enterprise scaling across Chartered Accountancies", C_EMERALD)
+    add_header(slide7, "Strategic Roadmap & Growth Vision", "Phased expansion from MVP to Enterprise Chartered Accountancy Scaling", C_EMERALD)
     
     milestones = [
-        ("Phase 1: MVP (Completed)", "• 10 Specialized AI Agents operational\n• Immutable double-entry ledger core\n• GST & TDS compliance engine\n• Light Grey & Trust Blue UX\n• Google Gemini 2.5 Flash + SHA256 Cache", C_EMERALD, "COMPLETED"),
+        ("Phase 1: MVP (Completed)", "• Hybrid Storage Engine (Supabase + Local)\n• Double-entry ledger core engine\n• Statutory GST & TDS compliance\n• OpenAI Codex AI Architecture\n• 1-Tap Pre-Coded AI Tasks", C_EMERALD, "COMPLETED"),
         ("Phase 2: Q3 2026 (In Progress)", "• Direct GSTN Portal Sandbox APIs\n• Account Aggregator live bank feeds\n• Automated inventory batch valuation\n• E-way bill generation pipeline\n• Multi-user permission roles", C_INDIGO, "IN PROGRESS"),
-        ("Phase 3: 2027 (Planned)", "• ICAI fine-tuned accounting LLM\n• CA Multi-Firm Client Portal\n• Predictive working capital scoring\n• Automated vendor payouts via UPI/NEFT\n• Enterprise API Marketplace", C_ACCENT_BLUE, "PLANNED")
+        ("Phase 3: 2027 (Planned)", "• ICAI fine-tuned accounting LLM\n• CA Multi-Firm Client Portal\n• Predictive working capital credit scoring\n• Automated vendor payouts via UPI/NEFT\n• Enterprise API Marketplace", C_ACCENT_BLUE, "PLANNED")
     ]
     
     for i, (title, desc, color, status) in enumerate(milestones):
@@ -501,7 +491,7 @@ def create_presentation():
         p2.space_before = Pt(8)
 
     # ==========================================
-    # SLIDE 8: Final Call to Action
+    # SLIDE 8: Call to Action & Presentation Links
     # ==========================================
     slide8 = prs.slides.add_slide(blank)
     
@@ -510,12 +500,12 @@ def create_presentation():
     bg_cta.fill.fore_color.rgb = C_INDIGO
     bg_cta.line.fill.background()
     
-    tx_cta = slide8.shapes.add_textbox(Inches(1.5), Inches(2.0), Inches(10.33), Inches(3.5))
+    tx_cta = slide8.shapes.add_textbox(Inches(1.5), Inches(1.8), Inches(10.33), Inches(4.0))
     tf_c = tx_cta.text_frame
     tf_c.word_wrap = True
     
     p = tf_c.paragraphs[0]
-    p.text = "Ready to Transform Your Indian Business Accounting?"
+    p.text = "Ready to Transform Indian Business Accounting?"
     p.font.size = Pt(36)
     p.font.bold = True
     p.font.color.rgb = C_WHITE
@@ -529,10 +519,19 @@ def create_presentation():
     p2.alignment = PP_ALIGN.CENTER
     p2.space_before = Pt(16)
     p2.font.name = "Inter"
-    
-    add_button(slide8, "Explore Vyapar Mandap Live", Inches(4.66), Inches(5.2), Inches(4.0), Inches(0.75), C_EMERALD)
 
-    # Save handling for local file
+    p3 = tf_c.add_paragraph()
+    p3.text = "GitHub: github.com/Abhitech-st/Vyapar-Mandap"
+    p3.font.size = Pt(14)
+    p3.font.bold = True
+    p3.font.color.rgb = RGBColor(240, 253, 244)
+    p3.alignment = PP_ALIGN.CENTER
+    p3.space_before = Pt(20)
+    p3.font.name = "Inter"
+    
+    add_button(slide8, "Explore Live Platform Demo", Inches(4.66), Inches(5.4), Inches(4.0), Inches(0.75), C_EMERALD)
+
+    # Save PowerPoint Presentation
     output_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     target_path = os.path.join(output_dir, "Vyapar_Mandap_Presentation.pptx")
     try:
@@ -541,7 +540,7 @@ def create_presentation():
     except PermissionError:
         fallback = os.path.join(output_dir, "Vyapar_Mandap_Presentation_Fixed.pptx")
         prs.save(fallback)
-        print(f"[INFO] Primary file was locked. Presentation saved to: {fallback}")
+        print(f"[INFO] Primary file locked. Saved to: {fallback}")
 
 if __name__ == "__main__":
     create_presentation()

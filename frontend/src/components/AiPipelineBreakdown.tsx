@@ -4,7 +4,7 @@ import { Sparkles, CheckCircle2, Clock, ShieldCheck, FileCheck, Layers } from 'l
 export const AiPipelineBreakdown: React.FC = () => {
   const timelineSteps = [
     { time: "09:42", label: "Invoice Uploaded", status: "completed", desc: "PDF ingested & SHA256 hashed" },
-    { time: "09:42", label: "OCR Extraction", status: "completed", conf: "99%", desc: "Gemini 2.5 Flash extracted line items" },
+    { time: "09:42", label: "OCR Extraction", status: "completed", conf: "99%", desc: "Codex AI Vision extracted line items" },
     { time: "09:43", label: "Vendor Matched", status: "completed", conf: "96%", desc: "Apex Technologies Pvt Ltd identified" },
     { time: "09:43", label: "GST Verified", status: "completed", conf: "100%", desc: "GSTIN syntax & GSTR-2B ITC matched" },
     { time: "09:44", label: "Journal Generated", status: "completed", conf: "94%", desc: "Dr. Server Exp + Dr. Tax = Cr. Payable" },
@@ -20,7 +20,7 @@ export const AiPipelineBreakdown: React.FC = () => {
   ];
 
   const confBreakdown = [
-    { label: "OCR Vision Extraction", value: 99, color: "bg-emerald-600" },
+    { label: "Codex Vision OCR", value: 99, color: "bg-emerald-600" },
     { label: "GST Rule Validation", value: 100, color: "bg-emerald-600" },
     { label: "Vendor Account Match", value: 96, color: "bg-blue-600" },
     { label: "Ledger Proposal Accuracy", value: 94, color: "bg-blue-600" }
@@ -42,7 +42,7 @@ export const AiPipelineBreakdown: React.FC = () => {
         </div>
 
         <span className="text-[9px] sm:text-[10px] bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded font-bold">
-          Gemini 2.5 Flash
+          OpenAI Codex Engine
         </span>
       </div>
 

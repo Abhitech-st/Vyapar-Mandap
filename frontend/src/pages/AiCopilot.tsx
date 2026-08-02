@@ -7,7 +7,7 @@ export const AiCopilot: React.FC = () => {
   const [messages, setMessages] = useState([
     {
       sender: 'bot',
-      text: 'Hello! I am your Vyapar Mandap AI Copilot powered by Google Gemini 2.5 Flash. Click any pre-coded task on the right or type a custom financial question below.'
+      text: 'Hello! I am your Vyapar Mandap AI Copilot built using OpenAI Codex AI architecture. Click any pre-coded task on the right or type a custom financial question below.'
     }
   ]);
   const [isLoading, setIsLoading] = useState(false);
@@ -91,7 +91,7 @@ export const AiCopilot: React.FC = () => {
           <span>AI Financial Copilot & Automated Task Engine</span>
         </h1>
         <p className="text-xs text-slate-600 font-medium mt-0.5">
-          Ask accounting queries or launch pre-coded financial analysis tasks powered by Google Gemini 2.5 Flash
+          Ask accounting queries or launch pre-coded financial analysis tasks built using OpenAI Codex AI architecture
         </p>
       </div>
 
@@ -107,7 +107,7 @@ export const AiCopilot: React.FC = () => {
               <span className="font-bold text-xs text-slate-800">Natural Language Financial Query Workspace</span>
             </div>
             <span className="text-[10px] font-mono text-blue-800 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded font-bold">
-              Gemini 2.5 Flash Active
+              Codex Engine Active
             </span>
           </div>
 
@@ -136,7 +136,7 @@ export const AiCopilot: React.FC = () => {
             {isLoading && (
               <div className="text-xs text-blue-700 font-mono font-bold animate-pulse flex items-center space-x-2">
                 <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-                <span>Executing financial task with Google Gemini 2.5 Flash...</span>
+                <span>Executing financial task with OpenAI Codex AI engine...</span>
               </div>
             )}
           </div>
